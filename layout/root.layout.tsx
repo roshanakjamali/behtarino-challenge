@@ -13,7 +13,16 @@ export const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container>{children}</Container>
+      <Container
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          minHeight: '100vh',
+        }}
+      >
+        {children}
+      </Container>
     </ThemeProvider>
   );
 };

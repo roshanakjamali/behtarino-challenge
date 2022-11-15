@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -14,7 +15,7 @@ export const ProductCard: React.FC<{ data: ProductProps }> = ({
 }) => {
   return (
     <Card>
-      <CardActionArea>
+      <CardActionArea LinkComponent={Link} href={`/products/${product.id}`}>
         <CardContent>
           <CardImage>
             <Image
