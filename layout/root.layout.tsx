@@ -5,18 +5,15 @@ import Container from '@mui/material/Container';
 
 import theme from '../styles/theme';
 
-export default function RootLayout({
-  children,
-}: {
+interface RootLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container>{children}</Container>
     </ThemeProvider>
   );
-}
-
-
-  
+};
