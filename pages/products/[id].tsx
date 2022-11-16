@@ -1,20 +1,35 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
+import { dehydrate, QueryClient } from '@tanstack/react-query';
 
 import { ProductProps } from '../../types/products';
 import { ContentLayout } from '../../layout/content.layout';
 import ProductDetail from '../../components/products/detail';
 
-const Product: React.FC<{ product: ProductProps }> = ({ product }) => {
+import { getProduct } from '../../api/product';
+
+import { useProduct } from '../../hooks/useProduct';
+
+const Product: React.FC = () => {
+  const {
+    query: { id },
+  } = useRouter();
+
+  const { data: product, isLoading } = useProduct(id as string);
+
+  if (!isLoading && !product)
+    return <ContentLayout>An error has occurred</ContentLayout>;
+
   return (
     <>
       <Head>
-        <title>{product.title}</title>
-        <meta name='description' content={product.title} />
+        <title>{product!.title}</title>
+        <meta name='description' content={product!.title} />
       </Head>
 
       <ContentLayout>
-        <ProductDetail info={product} />
+        <ProductDetail info={product!} />
       </ContentLayout>
     </>
   );
@@ -23,13 +38,12 @@ const Product: React.FC<{ product: ProductProps }> = ({ product }) => {
 export async function getServerSideProps({
   query: { id },
 }: GetServerSidePropsContext) {
-  const product = await fetch(`https://fakestoreapi.com/products/${id}`).then(
-    (res) => res.json()
-  );
+  const queryClient = new QueryClient();
+  await queryClient.fetchQuery(['product', id], () => getProduct(id as string));
 
   return {
     props: {
-      product,
+      dehydratedState: dehydrate(queryClient),
     },
   };
 }
