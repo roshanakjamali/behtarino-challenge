@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 
-import { ProductProps } from '../../types/products';
 import { ContentLayout } from '../../layout/content.layout';
 import ProductDetail from '../../components/products/detail';
 
