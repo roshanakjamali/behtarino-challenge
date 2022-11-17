@@ -15,10 +15,7 @@ const Product: React.FC = () => {
     query: { id },
   } = useRouter();
 
-  const { data: product, isLoading } = useProduct(id as string);
-
-  if (!isLoading && !product)
-    return <ContentLayout>An error has occurred</ContentLayout>;
+  const { data: product } = useProduct(id as string);
 
   return (
     <>
@@ -38,7 +35,14 @@ export async function getServerSideProps({
   query: { id },
 }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
-  await queryClient.fetchQuery(['product', id], () => getProduct(id as string));
+  const product = await queryClient.fetchQuery(['product', id], () =>
+    getProduct(id as string)
+  );
+
+  if (!product)
+    return {
+      notFound: true,
+    };
 
   return {
     props: {
