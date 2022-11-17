@@ -1,15 +1,19 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import { dehydrate, QueryClient } from '@tanstack/react-query';
 
-import { ProductsProps } from '../types/products';
-import Products from '../components/products/collection';
+import { getAllProduct } from '../api/product';
+import { useAllProduct } from '../hooks/useProduct';
 
 import { HeaderLayout } from '../layout/header.layout';
 import { ContentLayout } from '../layout/content.layout';
+import Products from '../components/products/collection';
 
 import Logo from '../assets/images/logo.svg';
 
-export default function Home({ products }: { products: ProductsProps }) {
+export default function Home() {
+  const { data: products = [] } = useAllProduct();
+
   return (
     <>
       <Head>
@@ -29,18 +33,13 @@ export default function Home({ products }: { products: ProductsProps }) {
   );
 }
 
-export async function getServerSideProps(): Promise<{
-  props: {
-    products: ProductsProps;
-  };
-}> {
-  const products = await fetch('https://fakestoreapi.com/products').then(
-    (res) => res.json()
-  );
+export async function getServerSideProps() {
+  const queryClient = new QueryClient();
+  await queryClient.fetchQuery(['products'], () => getAllProduct());
 
   return {
     props: {
-      products,
+      dehydratedState: dehydrate(queryClient),
     },
   };
 }
